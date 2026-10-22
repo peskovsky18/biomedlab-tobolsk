@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>БиоМедЛаб Тобольск: Навигатор возможностей</title>
+  <!-- Telegram Web App SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --tg-theme-bg-color: #f4f6fb;
+      --tg-theme-secondary-bg-color: #ffffff;
+      --tg-theme-text-color: #1c2434;
+      --tg-theme-hint-color: #7b889b;
+      --tg-theme-link-color: #2481cc;
+      --tg-theme-button-color: #2481cc;
+      --tg-theme-button-text-color: #ffffff;
+      --primary: #1068eb;
+      --primary-light: #e8f1fd;
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --accent-amber: #f59e0b;
+      --card-shadow: 0 4px 16px rgba(16, 24, 40, 0.06);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--tg-theme-bg-color);
+      color: var(--tg-theme-text-color);
+      padding-bottom: 90px;
+      line-height: 1.45;
+      font-size: 15px;
+    }
+
+    /* Top App Bar */
+    .app-header {
+      background: linear-gradient(135deg, #0e4da4 0%, #1a73e8 100%);
+      color: #fff;
+      padding: 20px 18px 24px;
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 8px 24px rgba(26, 115, 232, 0.25);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      margin-bottom: 8px;
+    }
+
+    .app-header h1 {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+
+    .app-header p {
+      font-size: 13px;
+      opacity: 0.88;
+    }
+
+    /* Main Container */
+    .container {
+      padding: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Tabs Bar (Fixed Bottom) */
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 8px 6px 14px;
+      z-index: 100;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--tg-theme-hint-color);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1;
+      padding: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn svg {
+      width: 22px;
+      height: 22px;
+      stroke-width: 2;
+      transition: transform 0.2s;
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+    }
+
+    .tab-btn.active svg {
+      transform: translateY(-2px);
+    }
+
+    /* Tab Contents */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--tg-theme-secondary-bg-color);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .route-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    .tag-blue { background: #e0f2fe; color: #0369a1; }
+    .tag-purple { background: #f3e8ff; color: #7e22ce; }
+    .tag-emerald { background: #d1fae5; color: #047857; }
+    .tag-amber { background: #fef3c7; color: #b45309; }
+
+    .card h2 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #0f172a;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--tg-theme-hint-color);
+      margin-bottom: 12px;
+    }
+
+    .param-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .param-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .param-label {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .param-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .advantage-box {
+      border-left: 3px solid var(--primary);
+      padding: 8px 12px;
+      background: #f0f7ff;
+      border-radius: 0 8px 8px 0;
+      font-size: 12.5px;
+      margin-bottom: 12px;
+      color: #1e40af;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 11px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-action:active {
+      opacity: 0.85;
+      transform: scale(0.99);
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      margin-top: 8px;
+    }
+
+    /* Micro-Trial Interactive Simulator */
+    .sim-box {
+      background: #0f172a;
+      color: #f8fafc;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .sim-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #38bdf8;
+    }
+
+    .water-select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #fff;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .meter-display {
+      background: #020617;
+      border: 1px solid #1e293b;
+      padding: 14px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .meter-val {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: monospace;
+      color: #10b981;
+    }
+
+    .meter-lbl {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    /* Negotiation Accordion */
+    .acc-item {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .acc-header {
+      padding: 12px 14px;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      background: #fff;
+    }
+
+    .acc-body {
+      padding: 0 14px 12px;
+      font-size: 13px;
+      color: #475569;
+      display: none;
+      border-top: 1px solid #f1f5f9;
+      background: #f8fafc;
+    }
+
+    .acc-item.open .acc-body {
+      display: block;
+      padding-top: 10px;
+    }
+
+    /* Moratorium Form */
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 4px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      font-size: 14px;
+    }
+
+    .agreement-output {
+      background: #fffbeb;
+      border: 1.5px dashed #f59e0b;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 14px;
+      display: none;
+    }
+
+    /* Verification Badge */
+    .verify-footer {
+      text-align: center;
+      padding: 16px 8px;
+      font-size: 11px;
+      color: var(--tg-theme-hint-color);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="badge-top">
+      <span>🔬 Тобольск ⇄ Тюмень</span>
+      <span>•</span>
+      <span>10 класс</span>
+    </div>
+    <h1>БиоМедЛаб: Навигатор</h1>
+    <p>Маршруты естественнонаучного успеха без клинического стресса</p>
+  </header>
+
+  <!-- Container -->
+  <main class="container">
+
+    <!-- TAB 1: ROUTES -->
+    <section id="tab-routes" class="tab-content active">
+      
+      <!-- Route 1 -->
+      <div class="card">
+        <div class="card-header">
+          <span class="route-tag tag-blue">Компромисс для семьи</span>
+          <span style="font-size: 12px; font-weight: 700; color: #0284c7;">6 лет • Специалитет</span>
+        </div>
+        <h2>30.05.01 Медицинская биохимия</h2>
+        <div class="card-subtitle">Тюменский государственный медицинский университет (ТюмГМУ)</div>
+        
+        <div class="advantage-box">
+          🎯 <strong>Консенсус с семьей:</strong> диплом государственного медвуза и статус врача удовлетворяют родителей (переезд оплатят), а Полина работает в лаборатории с реактивами и приборами (ПЦР, генетика, ИФА) без пациентов!
+        </div>
+
+        <div class="param-grid">
+          <div class="param-item">
+            <span class="param-label">Квалификация</span>
+            <span class="param-val">Врач-биохимик</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Логистика</span>
+            <span class="param-val">240 км (поезд 3.5 ч)</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">ЕГЭ и Баллы</span>
+            <span class="param-val">Хим + Био + Рус (238+)</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Оклады (Роструд)</span>
+            <span class="param-val">65 000 – 120 000 ₽</span>
+          </div>
+        </div>
+
+        <a href="https://tyumsmu.ru" target="_blank" class="btn-action">
+          <span>Сайт приемной комиссии ТюмГМУ</span>
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+      </div>
+
+      <!-- Route 2 -->
+      <div class="card">
+        <div class="card-header">
+          <span class="route-tag tag-purple">Инновации и биотех</span>
+          <span style="font-size: 12px; font-weight: 700; color: #7c3aed;">4–5 лет • Бакалавриат</span>
+        </div>
+        <h2>19.03.01 Биотехнология и биоинженерия</h2>
+        <div class="card-subtitle">Институт X-BIO ТюмГУ (Тюмень) / СПХФУ (Санкт-Петербург)</div>
+        
+        <div class="advantage-box" style="border-left-color: var(--accent-purple); background: #faf5ff; color: #581c87;">
+          🧬 <strong>Интерес Полины:</strong> молекулярное конструирование, микробиология, разработка вакцин и лекарственных биопрепаратов в R&D фармацевтических гигантов (BIOCAD, Генериум).
+        </div>
+
+        <div class="param-grid">
+          <div class="param-item">
+            <span class="param-label">Квалификация</span>
+            <span class="param-val">Биоинженер / Технолог</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Общежитие</span>
+            <span class="param-val">Предоставляется</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">ЕГЭ</span>
+            <span class="param-val">Био + Хим/Мат + Рус</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Оклады (R&D)</span>
+            <span class="param-val">75 000 – 150 000 ₽</span>
+          </div>
+        </div>
+
+        <a href="https://utmn.ru" target="_blank" class="btn-action" style="background: #7c3aed;">
+          <span>Сайт Института X-BIO ТюмГУ</span>
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+      </div>
+
+      <!-- Route 3 -->
+      <div class="card">
+        <div class="card-header">
+          <span class="route-tag tag-emerald">Индустрия Тобольска</span>
+          <span style="font-size: 12px; font-weight: 700; color: #059669;">4 года • Высокий доход</span>
+        </div>
+        <h2>05.03.06 Гидрохимия и экотоксикология</h2>
+        <div class="card-subtitle">ТКНС УрО РАН (Тобольск) / ЗапСибНефтехим (СИБУР)</div>
+        
+        <div class="advantage-box" style="border-left-color: var(--accent-green); background: #ecfdf5; color: #065f46;">
+          🌊 <strong>Опора на опыт:</strong> прямое развитие домашних замеров качества воды. Высокооплачиваемая элита промышленного контроля на СИБУРе с целевым договором и стипендией!
+        </div>
+
+        <div class="param-grid">
+          <div class="param-item">
+            <span class="param-label">Квалификация</span>
+            <span class="param-val">Инженер-гидрохимик</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Локация</span>
+            <span class="param-val">Тобольск (родной город)</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">ЕГЭ</span>
+            <span class="param-val">Хим + Био/Мат + Рус</span>
+          </div>
+          <div class="param-item">
+            <span class="param-label">Оклады (СИБУР)</span>
+            <span class="param-val">90 000 – 140 000 ₽</span>
+          </div>
+        </div>
+
+        <a href="http://tknsuran.ru" target="_blank" class="btn-action" style="background: #059669;">
+          <span>Сайт ТКНС УрО РАН (Тобольск)</span>
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+      </div>
+
+      <!-- Backup Route -->
+      <div class="card" style="border: 1px dashed #cbd5e1;">
+        <div class="card-header">
+          <span class="route-tag tag-amber">Резервный вариант</span>
+          <span style="font-size: 12px; font-weight: 700; color: #d97706;">СПО • 2 г. 10 мес.</span>
+        </div>
+        <h2>31.02.03 Лабораторная диагностика</h2>
+        <div class="card-subtitle">Тобольский медицинский колледж им. Володи Солдатова</div>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">
+          Страховка без выезда из Тобольска на бюджетной основе. Старт в клинической лаборатории без потери года в случае сбоя на ЕГЭ.
+        </p>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: MICRO-TRIAL SIMULATOR -->
+    <section id="tab-trial" class="tab-content">
+      
+      <div class="card">
+        <h2>🔬 Экспресс-проба: Лаборант гидрохимии</h2>
+        <p class="card-subtitle">Интерактивный симулятор 45-минутной стандартизированной пробы</p>
+
+        <div class="sim-box">
+          <div class="sim-title">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            <span>Виртуальная гидрохимическая станция</span>
+          </div>
+
+          <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 6px;">Выберите образец воды:</label>
+          <select id="waterSample" class="water-select" onchange="runAnalysis()">
+            <option value="irtysh">Образец №1: Река Иртыш (створ г. Тобольск)</option>
+            <option value="tobol">Образец №2: Река Тобол (устьевой участок)</option>
+            <option value="tap">Образец №3: Водопроводная сеть 7-го мкр. Тобольска</option>
+          </select>
+
+          <div class="meter-display">
+            <div>
+              <div id="phVal" class="meter-val">7.35</div>
+              <div class="meter-lbl">Водородный pH</div>
+            </div>
+            <div>
+              <div id="tdsVal" class="meter-val">280</div>
+              <div class="meter-lbl">TDS (мг/дм³)</div>
+            </div>
+            <div>
+              <div id="hardVal" class="meter-val">4.8</div>
+              <div class="meter-lbl">Жесткость (°Ж)</div>
+            </div>
+          </div>
+
+          <div id="normReport" style="font-size: 12.5px; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.2); padding: 10px; border-radius: 8px; color: #bae6fd;">
+            ✓ Все показатели укладываются в рыбохозяйственные нормативы СанПиН. Превышений тяжелых металлов не зафиксировано.
+          </div>
+        </div>
+
+        <div class="card" style="background: #f8fafc; border: 1px solid #e2e8f0; margin-bottom: 0;">
+          <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">Рефлексивный чек-лист примерки:</h3>
+          <label style="display: flex; gap: 8px; font-size: 13px; margin-bottom: 6px;">
+            <input type="checkbox" checked> Спокойно переношу монотонную работу с пробирками и дозатором
+          </label>
+          <label style="display: flex; gap: 8px; font-size: 13px; margin-bottom: 6px;">
+            <input type="checkbox" checked> Запахи химических реактивов и солей не вызывают тошноты
+          </label>
+          <label style="display: flex; gap: 8px; font-size: 13px;">
+            <input type="checkbox" checked> Чувствую интерес к поиску отклонений в цифрах приборов
+          </label>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 3: FAMILY NEGOTIATION -->
+    <section id="tab-family" class="tab-content">
+      
+      <div class="card">
+        <h2>🤝 Пакет «Семейный совет»</h2>
+        <p class="card-subtitle">Инструменты мирных переговоров без ультиматумов и ссор</p>
+
+        <!-- Accordions -->
+        <div class="acc-item open" onclick="toggleAcc(this)">
+          <div class="acc-header">
+            <span>Миф 1: «Всё кроме врача — потеря возможностей»</span>
+            <span>▾</span>
+          </div>
+          <div class="acc-body">
+            <strong>Факт:</strong> Врач-биохимик и биотехнолог работают с геномикой и фармпрепаратами. По данным Роструда, оклады в R&D и аналитических центрах СИБУРа достигают 140 000 ₽, что выше среднего оклада терапевта поликлиники.
+          </div>
+        </div>
+
+        <div class="acc-item" onclick="toggleAcc(this)">
+          <div class="acc-header">
+            <span>Миф 2: «Переезд стоит оплачивать только в медвуз»</span>
+            <span>▾</span>
+          </div>
+          <div class="acc-body">
+            <strong>Факт:</strong> Тюменский ГМУ находится в 240 км от Тобольска (билет на поезд от 900 руб.). Направление «Медицинская биохимия» находится в том же медицинском вузе, поэтому семейный бюджет расходуется по прямому назначению!
+          </div>
+        </div>
+
+        <div class="acc-item" onclick="toggleAcc(this)">
+          <div class="acc-header">
+            <span>Миф 3: «Если не лечить людей — зачем химия и биология?»</span>
+            <span>▾</span>
+          </div>
+          <div class="acc-body">
+            <strong>Факт:</strong> Науки о жизни (Life Sciences) — это драйвер XXI века. Лечение пациентов невозможно без предварительного лабораторного ДНК-анализа и разработки вакцин биохимиками.
+          </div>
+        </div>
+
+        <!-- Interactive Agreement Generator -->
+        <div style="margin-top: 18px;">
+          <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 10px;">Генератор Соглашения о моратории</h3>
+          
+          <div class="form-group">
+            <label>Имена родителей (или одного из родителей):</label>
+            <input type="text" id="parentNames" class="form-input" placeholder="Например: Елена Васильевна и Игорь Николаевич">
+          </div>
+
+          <div class="form-group">
+            <label>Срок семейного моратория:</label>
+            <input type="text" id="moratoriumDate" class="form-input" value="15 мая 2027 года (окончание 10 класса)">
+          </div>
+
+          <button onclick="generateAgreement()" class="btn-action" style="margin-top: 6px;">
+            ✍️ Сформировать соглашение
+          </button>
+
+          <div id="agreementBox" class="agreement-output">
+            <h4 style="text-align: center; font-weight: 800; margin-bottom: 8px;">СОГЛАШЕНИЕ О СЕМЕЙНОМ МОРАТОРИИ</h4>
+            <p id="agreementText"></p>
+            <div style="margin-top: 12px; font-weight: 700; display: flex; justify-content: space-between;">
+              <span>Родители: _________</span>
+              <span>Полина: _________</span>
+            </div>
+            <button onclick="window.print()" class="btn-action btn-outline" style="margin-top: 10px; padding: 6px;">
+              🖨 Распечатать соглашение
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 4: REFLECTION -->
+    <section id="tab-reflection" class="tab-content">
+      
+      <div class="card">
+        <h2>📝 Дневник примерки Полины</h2>
+        <p class="card-subtitle">Фиксация личных ощущений после событий и проб</p>
+
+        <div class="form-group">
+          <label>Событие (экскурсия, опыт, разговор):</label>
+          <input type="text" id="refEvent" class="form-input" placeholder="Например: Экскурсия в лабораторию ТКНС УрО РАН">
+        </div>
+
+        <div class="form-group">
+          <label>Что чувствовала телом и эмоциями?</label>
+          <input type="text" id="refFeel" class="form-input" placeholder="Например: Руки не дрожали, был интерес к прибору">
+        </div>
+
+        <div class="form-group">
+          <label>Мой следующий шаг:</label>
+          <input type="text" id="refStep" class="form-input" placeholder="Например: Посмотреть проходные баллы на биохимию">
+        </div>
+
+        <button onclick="saveNote()" class="btn-action" style="background: #0284c7;">
+          💾 Сохранить запись
+        </button>
+
+        <div id="notesList" style="margin-top: 16px;">
+          <!-- Saved notes will appear here -->
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🛡 Каталог суверенных решений</h2>
+        <p class="card-subtitle">Решения, которые категорически нельзя принимать без Полины:</p>
+        <ul style="padding-left: 20px; font-size: 13px; color: #475569; line-height: 1.6;">
+          <li>Итоговый выбор вуза и специальности по диплому</li>
+          <li>Перечень сдаваемых предметов ЕГЭ</li>
+          <li>Подписание целевых контрактов с обязательством отработки</li>
+          <li>Разглашение личных переживаний родственникам</li>
+        </ul>
+      </div>
+
+    </section>
+
+    <!-- Verification Info -->
+    <div class="verify-footer">
+      <div>Источники: bvbinfo.ru • trudvsem.ru • tyumsmu.ru • utmn.ru • tknsuran.ru</div>
+      <div>Дата верификации базы данных: 22 октября 2026 г. • г. Тобольск</div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Navigation Tab Bar -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('routes')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+      <span>Маршруты</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('trial')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+      <span>Микро-проба</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('family')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      <span>Семья</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('reflection')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <span>Рефлексия</span>
+    </button>
+  </nav>
+
+  <script>
+    // Initialize Telegram WebApp
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
+    function haptic() {
+      if (tg && tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred('light');
+      }
+    }
+
+    // Switch Tabs
+    function switchTab(tabId) {
+      haptic();
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      const targetContent = document.getElementById('tab-' + tabId);
+      if (targetContent) targetContent.classList.add('active');
+      
+      const btnIndex = ['routes', 'trial', 'family', 'reflection'].indexOf(tabId);
+      if (btnIndex >= 0) {
+        document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Interactive Simulator
+    function runAnalysis() {
+      haptic();
+      const sample = document.getElementById('waterSample').value;
+      const ph = document.getElementById('phVal');
+      const tds = document.getElementById('tdsVal');
+      const hard = document.getElementById('hardVal');
+      const report = document.getElementById('normReport');
+
+      if (sample === 'irtysh') {
+        ph.textContent = '7.35';
+        tds.textContent = '280';
+        hard.textContent = '4.8';
+        report.innerHTML = '✓ <strong>р. Иртыш (Тобольск):</strong> Показатели соответствуют рыбохозяйственным нормативам СанПиН. Мутность умеренная, солесодержание в норме.';
+      } else if (sample === 'tobol') {
+        ph.textContent = '7.60';
+        tds.textContent = '340';
+        hard.textContent = '5.4';
+        report.innerHTML = '✓ <strong>р. Тобол (устье):</strong> Повышенная минерализация природного генезиса, гидрокарбонатный тип воды. Токсичных аномалий нет.';
+      } else if (sample === 'tap') {
+        ph.textContent = '7.10';
+        tds.textContent = '195';
+        hard.textContent = '3.2';
+        report.innerHTML = '✓ <strong>Водопровод (Тобольск):</strong> Соответствует нормам СанПиН 1.2.3685-21 для питьевого водоснабжения.';
+      }
+    }
+
+    // Accordions
+    function toggleAcc(element) {
+      haptic();
+      element.classList.toggle('open');
+    }
+
+    // Agreement Generator
+    function generateAgreement() {
+      haptic();
+      const parents = document.getElementById('parentNames').value.trim() || 'Родители (законные представители)';
+      const date = document.getElementById('moratoriumDate').value.trim() || '15 мая 2027 г.';
+      
+      const text = `Мы, нижеподписавшиеся ${parents} и обучающаяся 10 класса Полина, договорились:<br><br>` +
+        `1. Установить семейный мораторий на окончательный выбор специальности до <strong>${date}</strong>.<br>` +
+        `2. Родители финансируют углубленную подготовку по <strong>биологии и химии</strong>, так как эти дисциплины универсальны для медицинской биохимии, биотехнологий и экотоксикологии.<br>` +
+        `3. Полина берет на себя обязательства оформить исследовательский проект по воде и пройти лабораторную пробу.<br>` +
+        `4. В мае 2027 года семья проводит итоговый совет на основе реальных баллов пробных ЕГЭ и личных впечатлений Полины.`;
+      
+      document.getElementById('agreementText').innerHTML = text;
+      document.getElementById('agreementBox').style.display = 'block';
+    }
+
+    // Local Storage for Reflection Notes
+    function saveNote() {
+      haptic();
+      const event = document.getElementById('refEvent').value.trim();
+      const feel = document.getElementById('refFeel').value.trim();
+      const step = document.getElementById('refStep').value.trim();
+
+      if (!event || !feel) {
+        alert('Пожалуйста, заполните поля события и ощущений');
+        return;
+      }
+
+      const note = { event, feel, step, date: new Date().toLocaleDateString('ru-RU') };
+      let notes = JSON.parse(localStorage.getItem('polina_notes') || '[]');
+      notes.unshift(note);
+      localStorage.setItem('polina_notes', JSON.stringify(notes));
+
+      document.getElementById('refEvent').value = '';
+      document.getElementById('refFeel').value = '';
+      document.getElementById('refStep').value = '';
+      renderNotes();
+    }
+
+    function renderNotes() {
+      const notes = JSON.parse(localStorage.getItem('polina_notes') || '[]');
+      const container = document.getElementById('notesList');
+      if (notes.length === 0) {
+        container.innerHTML = '<div style="font-size: 12px; color: #94a3b8; text-align: center;">Пока нет записей. Добавьте первую!</div>';
+        return;
+      }
+      container.innerHTML = notes.map((n, i) => `
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; margin-bottom: 8px; font-size: 13px;">
+          <div style="display: flex; justify-content: space-between; font-weight: 700; color: #0284c7; margin-bottom: 4px;">
+            <span>${n.event}</span>
+            <span style="font-size: 11px; color: #94a3b8;">${n.date}</span>
+          </div>
+          <div style="color: #334155; margin-bottom: 4px;"><strong>Ощущения:</strong> ${n.feel}</div>
+          ${n.step ? `<div style="color: #10b981;"><strong>Шаг:</strong> ${n.step}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    // Initial render
+    renderNotes();
+  </script>
+</body>
+</html>
