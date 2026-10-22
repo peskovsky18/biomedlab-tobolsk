@@ -20,9 +20,8 @@ from aiogram.types import (
 # Токен бота (из переменной окружения или захардкоженный для тестов)
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
 
-# URL развернутого веб-приложения (GitHub Pages / Vercel / ngrok)
-# Замените этот URL на ваш реальный адрес после загрузки на GitHub Pages / Vercel
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://your-username.github.io/biomedlab-tobolsk/")
+# URL развернутого веб-приложения (GitHub Pages)
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://peskovsky18.github.io/biomedlab-tobolsk/")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 

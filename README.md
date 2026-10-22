@@ -3,50 +3,35 @@
 Проект психолого-педагогического сопровождения обучающейся 10 класса (Полина, 16 лет, г. Тобольск).
 Разработан в соответствии с регламентом аттестационной работы «Маршрут возможностей».
 
----
-
-## 🚀 Как развернуть Telegram Mini App за 2 минуты
-
-### Способ 1. Бесплатный хостинг на GitHub Pages
-1. Создайте новый публичный репозиторий на [GitHub.com](https://github.com/new) (например, `biomedlab-tobolsk`).
-2. Загрузите файлы репозитория:
-   ```bash
-   git remote add origin https://github.com/ВАШ_ЛОГИН/biomedlab-tobolsk.git
-   git branch -M main
-   git push -u origin main
-   ```
-3. В настройках репозитория на GitHub перейдите в **Settings → Pages** → в разделе **Branch** выберите `main` (папка `/root`) и нажмите **Save**.
-4. Через 30 секунд появится готовая ссылка:
-   `https://ВАШ_ЛОГИН.github.io/biomedlab-tobolsk/`
+🔗 **Готовый URL приложения (GitHub Pages):**  
+`https://peskovsky18.github.io/biomedlab-tobolsk/`
 
 ---
 
-### Способ 2. Мгновенный деплой на Vercel
-1. Зайдите на [vercel.com](https://vercel.com) под своим GitHub-аккаунтом.
-2. Нажмите **Add New... → Project**, выберите репозиторий `biomedlab-tobolsk`.
-3. Нажмите **Deploy** — через 10 секунд получите ссылку вида:
-   `https://biomedlab-tobolsk.vercel.app`
+## 🚀 Как включить GitHub Pages в репозитории (1 минута)
+1. Откройте настройки репозитория: [https://github.com/peskovsky18/biomedlab-tobolsk/settings/pages](https://github.com/peskovsky18/biomedlab-tobolsk/settings/pages).
+2. В разделе **Build and deployment → Branch**:
+   * Выберите ветку: `main`
+   * Папку: `/ (root)`
+   * Нажмите **Save**.
+3. Через 30–60 секунд сайт будет доступен по адресу:  
+   `https://peskovsky18.github.io/biomedlab-tobolsk/`
 
 ---
 
-## 🤖 Как подключить Mini App к вашему Telegram-боту
+## 🤖 Как привязать Mini App к Telegram-боту
 
-### Вариант А: Через официального бота @BotFather (без кода)
+### Вариант 1: Через бота @BotFather (без программирования)
 1. Откройте в Telegram бота **[@BotFather](https://t.me/BotFather)**.
-2. Отправьте команду `/mybots` и выберите вашего бота (или создайте нового через `/newbot`).
-3. Перейдите в: **Bot Settings → Menu Button → Configure menu button**.
-4. Отправьте полученную ссылку на сайт (например: `https://ВАШ_ЛОГИН.github.io/biomedlab-tobolsk/`).
-5. Напишите название кнопки, например: `Навигатор 🔬`.
-6. Готово! Теперь в вашем боте внизу слева всегда будет активна кнопка открытия Mini App.
+2. Отправьте `/mybots` и выберите вашего бота.
+3. Нажмите: **Bot Settings → Menu Button → Configure menu button**.
+4. Вставьте адрес:  
+   `https://peskovsky18.github.io/biomedlab-tobolsk/`
+5. Введите название кнопки: `Навигатор 🔬`.
+6. Готово! В чате с ботом появится постоянная кнопка внизу слева.
 
-### Вариант Б: Запуск через готовый скрипт `bot.py`
-1. Задайте токен вашего бота и адрес веб-приложения:
-   ```bash
-   export BOT_TOKEN="ВАШ_ТОКЕН_ОТ_BOTFATHER"
-   export WEBAPP_URL="https://ВАШ_ЛОГИН.github.io/biomedlab-tobolsk/"
-   ```
-2. Запустите бота:
-   ```bash
-   python3 bot.py
-   ```
-3. Откройте бота в Telegram и отправьте `/start`.
+### Вариант 2: Запуск готового бота bot.py
+```bash
+export BOT_TOKEN="ВАШ_ТОКЕН_ОТ_BOTFATHER"
+python3 bot.py
+```
