@@ -21,7 +21,7 @@ from aiogram.types import (
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
 
 # URL развернутого веб-приложения (GitHub Pages с cache-buster)
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://peskovsky18.github.io/biomedlab-tobolsk/?v=2")
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://peskovsky18.github.io/biomedlab-tobolsk/?v=3")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
